@@ -224,7 +224,7 @@ chmod 600 ~/.ssh/known_hosts
 | `p` | 暂停/恢复自动刷新和自动翻页 |
 | `a` | 临时开启/关闭自动翻页 |
 | `g` | 切换服务器群组筛选 |
-| `i` | 显示/隐藏右侧 INSPECT 详情（窄屏默认隐藏，优先显示完整表格） |
+| `i` | 显示/隐藏右侧 INSPECT 详情；隐藏后表格使用全宽 |
 | `q` | 退出 |
 
 表格列顺序为 `HOST → UPTIME → CPU → MEM → DISK → LOAD → NET → STATUS`，`STATUS` 在宽屏表格的最右侧。
@@ -291,7 +291,7 @@ sudo usermod -aG video "$USER"
 # 如果普通用户启动提示 Operation not permitted：
 sudo setcap cap_sys_tty_config+ep /usr/bin/fbterm
 # 重新登录后
-fbterm -n "DejaVu Sans Mono" -s 16 --font-width=8 --font-height=16
+fbterm -n "DejaVu Sans Mono" -s 16 --font-width=7 --font-height=16
 ```
 
 `fbterm` 需要能读写 `/dev/fb0`，所以当前用户必须在 `video` 组；它支持 256 色和正常等宽字体，适合直接占用物理 TTY。没有 `fbterm` 时仍可用 `console` 主题。
@@ -356,7 +356,7 @@ serverdeck --theme console   # 8 色物理终端：高对比 + ASCII 进度条
 | `midnight` | `#060d14` 深蓝黑 | 亮绿/亮红/青 | 原版深蓝观感、普通桌面终端 |
 | `console` | `#000000` 纯黑 | 高对比 ANSI 8 色 + ASCII 进度条 | Linux 物理 TTY、8 色终端、老式控制台 |
 
-主题只改变颜色；表格列数和侧栏由终端宽高决定。低于 160 列时默认隐藏侧栏、显示 8 列完整表格，按 `i` 可以查看详情。
+主题只改变颜色；表格列数和侧栏由终端宽高决定。默认显示详情侧栏，按 `i` 可以切换为全宽单列表。
 
 主题预览（`console` 适合直接看物理 TTY，不依赖 RGB 色板）：
 
@@ -364,13 +364,16 @@ serverdeck --theme console   # 8 色物理终端：高对比 + ASCII 进度条
 - [mono 纯黑单色](assets/theme-mono.png)
 - [black 纯黑彩色](assets/theme-black.png)
 - [midnight 深海军蓝](assets/theme-midnight.png)
+- [console 高对比 8 色终端](assets/theme-console.png)
 
 布局会随终端大小变化：
 
 - `≥ 160` 列：8 列完整表格 + 详情侧栏
-- `< 160` 列：默认全宽 8 列表格，无侧栏；按 `i` 显示/隐藏详情
-- 显示详情时：128–135 列使用 6 列紧凑表格，146–159 列使用 8 列紧凑表格
-- `< 112` 列：紧凑表格，无侧栏
+- `146–159` 列：8 列紧凑表格 + 详情侧栏（物理 146×48 控制台使用这一档）
+- `136–145` 列：6 列精简表格 + 详情侧栏
+- `128–135` 列：6 列紧凑表格 + 详情侧栏
+- `< 128` 列：默认无详情侧栏
+- 任意布局按 `i` 可切换详情侧栏；隐藏后表格使用全宽
 
 状态含义：
 
