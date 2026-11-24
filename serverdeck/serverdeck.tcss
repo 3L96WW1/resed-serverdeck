@@ -227,7 +227,7 @@ Screen.theme-graphite DataTable > .datatable--even-row {
 }
 
 Screen.theme-graphite DataTable > .datatable--cursor {
-    background: #2a2a2a;
+    background: #2e718d;
 }
 
 Screen.theme-graphite DataTable > .datatable--hover {

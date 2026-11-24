@@ -60,8 +60,8 @@ def mini_gauge(
     filled = int(round(percent / 100 * width))
     filled = max(0, min(width, filled))
     result = Text()
-    result.append("▰" * filled, style=color)
-    result.append("▱" * (width - filled), style=palette.muted)
+    result.append("█" * filled, style=color)
+    result.append("░" * (width - filled), style=palette.muted)
     result.append(f" {percent:>3.0f}%", style=color)
     return result
 
@@ -494,13 +494,13 @@ def refresh_text(
     text.append(f"{label:<8}", style=palette.text if not starting else palette.muted)
     text.append(" ")
     if paused or starting or refreshing:
-        text.append("▱" * bar_width, style=palette.border)
+        text.append("░" * bar_width, style=palette.border)
         return text
 
     progress = 0.0
     if interval > 0 and next_in is not None:
         progress = max(0.0, min(1.0, 1.0 - next_in / interval))
     filled = int(round(progress * bar_width))
-    text.append("▰" * filled, style=palette.soft)
-    text.append("▱" * (bar_width - filled), style=palette.border)
+    text.append("█" * filled, style=palette.soft)
+    text.append("░" * (bar_width - filled), style=palette.border)
     return text
