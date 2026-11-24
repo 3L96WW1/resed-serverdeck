@@ -442,7 +442,7 @@ class ServerDeckApp(App[None]):
     def _apply_snapshot(self, snapshot: ServerSnapshot) -> None:
         previous = self._snapshots.get(snapshot.server.id)
         self._snapshots[snapshot.server.id] = snapshot
-        if self.config.settings.alerts:
+        if self.config.settings.alerts and snapshot.server.enabled:
             for alert in detect_alerts(previous, snapshot):
                 self.notify(
                     alert.message,
@@ -450,7 +450,7 @@ class ServerDeckApp(App[None]):
                     severity=alert.severity,
                     timeout=6,
                 )
-        if self._history is not None:
+        if self._history is not None and snapshot.server.enabled:
             try:
                 self._history.record(snapshot)
             except Exception as exc:
@@ -535,7 +535,7 @@ class ServerDeckApp(App[None]):
         content = self.query_one("#detail-content", Static)
         panel = self.query_one("#detail-panel")
         availability = None
-        if self._history is not None:
+        if self._history is not None and snapshot.server.enabled:
             try:
                 availability = self._history.availability(snapshot.server.id, 24)
             except Exception:

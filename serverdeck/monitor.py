@@ -117,6 +117,15 @@ class MonitorBase:
         ) as pool:
             futures: dict[Future[ServerSnapshot], ServerConfig] = {}
             for server in servers:
+                if not server.enabled:
+                    snapshot = self._offline(
+                        server,
+                        previous.get(server.id),
+                        "monitoring disabled (placeholder)",
+                    )
+                    results[server.id] = snapshot
+                    callback(snapshot)
+                    continue
                 try:
                     future = pool.submit(self.collect, server, previous.get(server.id))
                 except Exception as exc:
@@ -164,6 +173,8 @@ class Monitor(MonitorBase):
     def collect(
         self, server: ServerConfig, previous: ServerSnapshot | None
     ) -> ServerSnapshot:
+        if not server.enabled:
+            return self._offline(server, previous, "monitoring disabled (placeholder)")
         collector = self._collectors[server.id]
         try:
             collection = collector.collect()

@@ -58,6 +58,14 @@ servers:
     tags: [prod, database]
     services: [postgresql, pgbackrest]
 
+  # Offline placeholder: shown in the table, but never probed.
+  # - name: puzzlebox
+  #   type: ssh
+  #   host: 192.0.2.222
+  #   enabled: false
+  #   group: Lab
+  #   tags: [placeholder]
+
   - name: edge-sg
     type: ssh
     host: 103.85.24.10

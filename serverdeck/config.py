@@ -61,6 +61,7 @@ class ServerConfig:
     name: str
     transport: Literal["local", "ssh"]
     group: str = "Default Server Group"
+    enabled: bool = True
     tags: tuple[str, ...] = ()
     services: tuple[str, ...] = ()
     host: str | None = None
@@ -351,6 +352,7 @@ def _parse_server(raw: Any, index: int) -> ServerConfig:
         "tags",
         "services",
         "group",
+        "enabled",
     }
     _reject_unknown(data, allowed, where)
 
@@ -380,6 +382,7 @@ def _parse_server(raw: Any, index: int) -> ServerConfig:
     group = _string(data.get("group", "Default Server Group"), f"{where}.group")
     if not group:
         group = "Default Server Group"
+    enabled = _boolean(data.get("enabled", True), f"{where}.enabled")
     tags = _string_list(data.get("tags"), f"{where}.tags")
     services = _string_list(data.get("services"), f"{where}.services")
     if len(services) > 24:
@@ -406,6 +409,7 @@ def _parse_server(raw: Any, index: int) -> ServerConfig:
             name=name,
             transport="local",
             group=group,
+            enabled=enabled,
             tags=tags,
             services=services,
         )
@@ -452,6 +456,7 @@ def _parse_server(raw: Any, index: int) -> ServerConfig:
         name=name,
         transport="ssh",
         group=group,
+        enabled=enabled,
         tags=tags,
         services=services,
         host=host,

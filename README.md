@@ -142,6 +142,7 @@ servers:
 | `id` | 全部 | 可选内部 ID，省略时由名称生成 |
 | `type` | 全部 | `local` 或 `ssh`；不写时若配置了 `host` 则自动推断为 `ssh` |
 | `group` | 全部 | 服务器群组，详情栏显示；默认 `Default Server Group` |
+| `enabled` | 全部 | 设为 `false` 时保留条目并显示为 `offline`，但不发起任何探测；适合占位或长期关机主机 |
 | `tags` | 全部 | 列表，用于展示分组标签 |
 | `services` | 全部 | systemd unit 名列表，最多 24 个 |
 | `host` | SSH | 主机名或 IP，必填 |
@@ -242,6 +243,21 @@ settings:
 - 按 `a` 可以临时切换，不改写配置文件。
 - 手动选择服务器后会重新计时，不会刚看完就被自动切走。
 - `auto_page: false` 可永久关闭。
+
+### 离线占位
+
+机器不常开机，或者暂时不想让 ServerDeck 探测它，可以保留条目并关闭探测：
+
+```yaml
+- name: puzzlebox
+  type: ssh
+  host: 10.0.100.222
+  enabled: false
+  group: Lab
+  tags: [placeholder]
+```
+
+它会在列表里显示为 `offline`，详情页提示 `monitoring disabled (placeholder)`，但不会发起 SSH 连接，也不会写入可用率历史。以后要启用时改成 `enabled: true` 并补上认证信息即可。
 
 ### 群组筛选
 

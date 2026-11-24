@@ -174,6 +174,7 @@ def snapshot_to_dict(snapshot: ServerSnapshot) -> dict[str, object]:
         "name": snapshot.server.name,
         "group": snapshot.server.group,
         "transport": snapshot.server.transport,
+        "enabled": snapshot.server.enabled,
         "endpoint": snapshot.server.endpoint,
         "status": snapshot.status.value,
         "checked_at": snapshot.checked_at.isoformat(),

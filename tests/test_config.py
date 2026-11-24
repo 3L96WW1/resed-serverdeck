@@ -264,3 +264,20 @@ def test_history_settings_can_be_customized(tmp_path):
     assert config.settings.history is False
     assert config.settings.history_days == 3
     assert str(config.settings.history_db) == "/tmp/sd-history.db"
+
+
+def test_disabled_server_is_placeholder_without_credentials(tmp_path):
+    data = base_config()
+    data["servers"][1] = {
+        "name": "puzzlebox",
+        "type": "ssh",
+        "host": "192.0.2.222",
+        "enabled": False,
+        "group": "Lab",
+    }
+    config = load_config(write_config(tmp_path, data))
+    placeholder = config.servers[1]
+    assert placeholder.enabled is False
+    assert placeholder.password is None
+    assert placeholder.key is None
+    assert placeholder.group == "Lab"
