@@ -58,14 +58,14 @@ COMPACT_COLUMNS: tuple[tuple[str, str, int], ...] = (
     ("status", "STATUS", 10),
 )
 MEDIUM_COLUMNS: tuple[tuple[str, str, int], ...] = (
-    ("host", "HOST", 14),
-    ("uptime", "UPTIME", 7),
-    ("cpu", "CPU", 10),
-    ("mem", "MEM", 10),
-    ("disk", "DISK", 10),
-    ("load", "LOAD", 6),
-    ("net", "NET", 14),
-    ("status", "STATUS", 10),
+    ("host", "HOST", 20),
+    ("uptime", "UPTIME", 8),
+    ("cpu", "CPU", 13),
+    ("mem", "MEM", 13),
+    ("disk", "DISK", 13),
+    ("load", "LOAD", 7),
+    ("net", "NET RX/TX", 16),
+    ("status", "STATUS", 12),
 )
 
 
@@ -215,7 +215,7 @@ class ServerDeckApp(App[None]):
     def _columns(self) -> tuple[tuple[str, str, int], ...]:
         width = self.size.width
         if self._detail_visible:
-            if width >= 144:
+            if width >= 146:
                 if width >= 152:
                     return WIDE_COLUMNS
                 return MEDIUM_COLUMNS
