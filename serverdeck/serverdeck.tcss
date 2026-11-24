@@ -1,0 +1,235 @@
+Screen {
+    background: #060d14;
+    color: #cbd5e1;
+}
+
+#topbar {
+    height: 4;
+    padding: 0 1;
+    background: #08131d;
+    border-bottom: solid #173242;
+    layout: vertical;
+}
+
+#masthead {
+    height: 1;
+    layout: horizontal;
+}
+
+#brand {
+    width: 1fr;
+    height: 1;
+    content-align: left middle;
+}
+
+#clock {
+    width: 38;
+    height: 1;
+    content-align: right middle;
+    color: #94a3b8;
+}
+
+#summary-row {
+    height: 1;
+    layout: horizontal;
+}
+
+#summary {
+    width: 1fr;
+    height: 1;
+    content-align: left middle;
+}
+
+#refresh-state {
+    width: 40;
+    height: 1;
+    content-align: right middle;
+    color: #64748b;
+}
+
+#body {
+    height: 1fr;
+    layout: horizontal;
+    padding: 1 1 0 1;
+}
+
+#table-panel {
+    width: 1fr;
+    height: 1fr;
+    border: round #1e3a4a;
+    background: #08131d;
+}
+
+#table-panel:focus-within {
+    border: round #2e718d;
+}
+
+#server-table {
+    height: 1fr;
+    background: transparent;
+    scrollbar-size-vertical: 1;
+    scrollbar-color: #2b526b;
+}
+
+DataTable > .datatable--header {
+    background: #0b1b27;
+    color: #7dd3fc;
+    text-style: bold;
+}
+
+DataTable > .datatable--cursor {
+    background: #10384b;
+    color: #ffffff;
+    text-style: bold;
+}
+
+DataTable > .datatable--hover {
+    background: #0d2837;
+}
+
+DataTable > .datatable--even-row {
+    background: #07131c;
+}
+
+#detail-panel {
+    width: 40;
+    height: 1fr;
+    margin-left: 1;
+    border: round #1e3a4a;
+    background: #08131d;
+}
+
+#detail-scroll {
+    height: 1fr;
+    scrollbar-size-vertical: 1;
+    scrollbar-color: #2b526b;
+}
+
+#detail-content {
+    width: 100%;
+    padding: 1 1 0 1;
+}
+
+#footer {
+    height: 1;
+    padding: 0 1;
+    background: #08131d;
+    color: #64748b;
+    content-align: left middle;
+}
+
+/* Pure-black with colored accents. */
+Screen.theme-black {
+    background: #000000;
+}
+
+Screen.theme-black #topbar,
+Screen.theme-black #footer,
+Screen.theme-black #table-panel,
+Screen.theme-black #detail-panel {
+    background: #000000;
+}
+
+Screen.theme-black #topbar {
+    border-bottom: solid #1c1c1c;
+}
+
+Screen.theme-black #table-panel,
+Screen.theme-black #detail-panel {
+    border: round #1f1f1f;
+}
+
+Screen.theme-black #table-panel:focus-within {
+    border: round #2e718d;
+}
+
+Screen.theme-black DataTable > .datatable--header,
+Screen.theme-black DataTable > .datatable--even-row {
+    background: #000000;
+}
+
+Screen.theme-black DataTable > .datatable--cursor {
+    background: #0b2633;
+}
+
+Screen.theme-black DataTable > .datatable--hover {
+    background: #0c1418;
+}
+
+/* Monochrome black theme: the no-color "rack" look. */
+Screen.theme-mono {
+    background: #000000;
+}
+
+Screen.theme-mono #topbar,
+Screen.theme-mono #footer,
+Screen.theme-mono #table-panel,
+Screen.theme-mono #detail-panel {
+    background: #000000;
+}
+
+Screen.theme-mono #topbar {
+    border-bottom: solid #2a2a2a;
+}
+
+Screen.theme-mono #table-panel,
+Screen.theme-mono #detail-panel {
+    border: round #2e2e2e;
+}
+
+Screen.theme-mono #table-panel:focus-within {
+    border: round #8a8a8a;
+}
+
+Screen.theme-mono DataTable > .datatable--header,
+Screen.theme-mono DataTable > .datatable--even-row {
+    background: #000000;
+    color: #b8b8b8;
+}
+
+Screen.theme-mono DataTable > .datatable--cursor {
+    background: #2a2a2a;
+}
+
+Screen.theme-mono DataTable > .datatable--hover {
+    background: #1b1b1b;
+}
+
+/* Graphite: restored charcoal / monochrome look from the first version. */
+Screen.theme-graphite {
+    background: #121212;
+}
+
+Screen.theme-graphite #topbar,
+Screen.theme-graphite #footer,
+Screen.theme-graphite #table-panel,
+Screen.theme-graphite #detail-panel {
+    background: #121212;
+}
+
+Screen.theme-graphite #topbar {
+    border-bottom: solid #2a2a2a;
+}
+
+Screen.theme-graphite #table-panel,
+Screen.theme-graphite #detail-panel {
+    border: round #2e2e2e;
+}
+
+Screen.theme-graphite #table-panel:focus-within {
+    border: round #8a8a8a;
+}
+
+Screen.theme-graphite DataTable > .datatable--header,
+Screen.theme-graphite DataTable > .datatable--even-row {
+    background: #121212;
+    color: #a8a8a8;
+}
+
+Screen.theme-graphite DataTable > .datatable--cursor {
+    background: #2a2a2a;
+}
+
+Screen.theme-graphite DataTable > .datatable--hover {
+    background: #1b1b1b;
+}

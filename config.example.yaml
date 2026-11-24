@@ -1,0 +1,72 @@
+# ServerDeck configuration
+# Copy this file to serverdeck.yaml and edit the hosts. Secrets should come
+# from environment variables (password_env / key_passphrase_env), not this file.
+version: 1
+
+settings:
+  theme: mono            # default; graphite, mono, or midnight also available
+  refresh_interval: 5        # seconds between polls (1-3600)
+  auto_page: true            # rotate through servers automatically
+  auto_page_interval: 6      # seconds per server
+  boot_animation: true       # print startup log + spinner before entering TUI
+  alerts: true               # in-TUI notifications on offline/recovery/service changes
+  history: true              # lightweight SQLite availability + sparkline history
+  history_days: 7
+  # history_db: ~/.local/state/serverdeck/history.db
+  connect_timeout: 6         # SSH/TCP connect timeout
+  command_timeout: 10        # time allowed for one probe
+  history_points: 48         # CPU sparkline samples kept in memory
+  known_hosts: ~/.ssh/known_hosts
+  thresholds:
+    cpu: 80                  # percent -> degraded
+    memory: 85
+    disk: 90
+    load_per_core: 1.25      # 1-minute load divided by CPU cores
+
+servers:
+  # The machine running ServerDeck. Exactly one local entry is allowed.
+  - name: atlas
+    type: local
+    group: Default Server Group
+    tags: [local, core]
+    services: [ssh, cron]
+
+  # Password auth via an environment variable (recommended for passwords):
+  #   export WEB01_PASSWORD='...'
+  #   serverdeck
+  - name: web-01
+    type: ssh
+    host: 10.0.10.21
+    port: 22
+    user: ops
+    password_env: WEB01_PASSWORD
+    host_key_policy: tofu       # tofu = trust on first use; strict = require known_hosts
+    group: Production Web
+    tags: [prod, web]
+    services: [nginx, docker]
+
+  # Key auth via ssh-agent (no key/password fields needed), or specify:
+  #   key: ~/.ssh/id_ed25519
+  #   key_passphrase_env: KEY_PASSPHRASE
+  - name: db-01
+    type: ssh
+    host: 10.0.10.31
+    user: ops
+    key: ~/.ssh/id_ed25519
+    host_key_policy: strict
+    group: Data Services
+    tags: [prod, database]
+    services: [postgresql, pgbackrest]
+
+  - name: edge-sg
+    type: ssh
+    host: 103.85.24.10
+    port: 2222
+    user: edge
+    # Inline password is supported for quick local setups but keeps the secret
+    # on disk. Prefer password_env, ssh-agent, or a key.
+    password: "change-me"
+    host_key_policy: tofu
+    group: Edge Network
+    tags: [edge, sin]
+    services: [caddy, wireguard]
