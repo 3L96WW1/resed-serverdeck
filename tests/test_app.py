@@ -10,13 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from serverdeck.app import (
-    COMPACT_COLUMNS,
-    MEDIUM_COLUMNS,
-    SPLIT_COLUMNS,
-    WIDE_COLUMNS,
-    ServerDeckApp,
-)
+from serverdeck.app import COMPACT_COLUMNS, WIDE_COLUMNS, ServerDeckApp
 from serverdeck.cli import main
 from serverdeck.demo import DEMO_CONFIG, DemoMonitor
 from serverdeck.models import ServerStatus
@@ -45,21 +39,39 @@ async def test_dashboard_responds_to_resize():
         assert len(table.columns) == len(WIDE_COLUMNS)
         await pilot.resize_terminal(140, 40)
         await pilot.pause(0.4)
-        assert app._detail_visible is True
-        assert len(table.columns) == len(SPLIT_COLUMNS)
+        assert app._detail_visible is False
+        assert len(table.columns) == len(WIDE_COLUMNS)
         await pilot.resize_terminal(128, 48)
         await pilot.pause(0.4)
-        assert app._detail_visible is True
-        assert len(table.columns) == len(COMPACT_COLUMNS)
+        assert app._detail_visible is False
+        assert len(table.columns) == len(WIDE_COLUMNS)
         await pilot.resize_terminal(146, 48)
         await pilot.pause(0.4)
-        assert app._detail_visible is True
-        assert len(table.columns) == len(MEDIUM_COLUMNS)
+        assert app._detail_visible is False
+        assert len(table.columns) == len(WIDE_COLUMNS)
         await pilot.resize_terminal(80, 24)
         await pilot.pause(0.4)
         assert app._detail_visible is False
         assert len(table.columns) == len(COMPACT_COLUMNS)
         assert app.query_one("#refresh-state").display is False
+
+
+@pytest.mark.asyncio
+async def test_inspect_panel_can_be_toggled_on_narrow_screen():
+    app = ServerDeckApp(DEMO_CONFIG, monitor=DemoMonitor(), demo=True)
+    async with app.run_test(size=(128, 48)) as pilot:
+        await pilot.pause(1.0)
+        table = app.query_one("#server-table")
+        assert app._detail_visible is False
+        assert len(table.columns) == len(WIDE_COLUMNS)
+        await pilot.press("i")
+        await pilot.pause(0.2)
+        assert app._detail_visible is True
+        assert len(table.columns) == len(COMPACT_COLUMNS)
+        await pilot.press("i")
+        await pilot.pause(0.2)
+        assert app._detail_visible is False
+        assert len(table.columns) == len(WIDE_COLUMNS)
 
 
 class SlowDemoMonitor(DemoMonitor):

@@ -464,6 +464,7 @@ def footer_text(
         ("p", "pause"),
         ("a", auto_label),
         ("g", "group"),
+        ("i", "inspect"),
         ("q", "quit"),
     ):
         text.append(f" {key} ", style=f"bold {palette.text} on {palette.chip_bg}")

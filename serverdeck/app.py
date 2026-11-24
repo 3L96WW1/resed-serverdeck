@@ -83,6 +83,7 @@ class ServerDeckApp(App[None]):
         Binding("p", "toggle_pause", "Pause", show=False),
         Binding("a", "toggle_auto_page", "Auto-page", show=False),
         Binding("g", "cycle_group", "Group filter", show=False),
+        Binding("i", "toggle_inspect", "Inspect", show=False),
     ]
 
     def __init__(
@@ -132,6 +133,7 @@ class ServerDeckApp(App[None]):
         self._last_clock: str | None = None
         self._layout_key: tuple[tuple[str, int], ...] | None = None
         self._detail_visible = True
+        self._inspect_forced: bool | None = None
         self._group_filter: str | None = None
         self._groups: tuple[str, ...] = tuple(
             dict.fromkeys(server.group for server in config.servers)
@@ -269,11 +271,16 @@ class ServerDeckApp(App[None]):
 
     def _apply_visibility(self) -> None:
         width = self.size.width
-        visible = width >= 128 and self.size.height >= 24
+        default_visible = width >= 160 and self.size.height >= 24
+        visible = (
+            self._inspect_forced
+            if self._inspect_forced is not None
+            else default_visible
+        )
         self._detail_visible = visible
         detail_panel = self.query_one("#detail-panel")
         detail_panel.display = visible
-        detail_panel.styles.width = 32 if width < 152 else 40
+        detail_panel.styles.width = 40
         self.query_one("#refresh-state").display = width >= 110
         self.query_one("#footer", Static).update(
             footer_text(
@@ -591,6 +598,12 @@ class ServerDeckApp(App[None]):
 
     def action_refresh(self) -> None:
         self._start_refresh()
+
+    def action_toggle_inspect(self) -> None:
+        self._inspect_forced = not self._detail_visible
+        self._apply_visibility()
+        self._configure_columns(force=True)
+        self._update_detail()
 
     def action_cycle_group(self) -> None:
         choices: tuple[str | None, ...] = (None, *self._groups)
