@@ -290,7 +290,7 @@ sudo usermod -aG video "$USER"
 # 如果普通用户启动提示 Operation not permitted：
 sudo setcap cap_sys_tty_config+ep /usr/bin/fbterm
 # 重新登录后
-fbterm -n "DejaVu Sans Mono" -s 16 --font-width=8
+fbterm -n "DejaVu Sans Mono" -s 16 --font-width=8 --font-height=16
 ```
 
 `fbterm` 需要能读写 `/dev/fb0`，所以当前用户必须在 `video` 组；它支持 256 色和正常等宽字体，适合直接占用物理 TTY。没有 `fbterm` 时仍可用 `console` 主题。

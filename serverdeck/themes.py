@@ -74,18 +74,18 @@ BLACK = Palette(
 # muted grayscale text.  This is a deliberate match for Textual's NO_COLOR
 # rendering of the first version, not just a desaturated colored theme.
 GRAPHITE = Palette(
-    green="#c2c2c2",
-    red="#d8d8d8",
+    green="#d8d8d8",
+    red="#ffffff",
     online="#39ff14",
     offline="#ff3b30",
-    amber="#a8a8a8",
-    cyan="#b3b3b3",
-    muted="#6e6e6e",
-    text="#d2d2d2",
-    soft="#9a9a9a",
-    border="#2a2a2a",
-    accent="#a8a8a8",
-    chip_bg="#1d1d1d",
+    amber="#c0c0c0",
+    cyan="#c8c8c8",
+    muted="#a0a0a0",
+    text="#f0f0f0",
+    soft="#d0d0d0",
+    border="#3a3a3a",
+    accent="#dddddd",
+    chip_bg="#2a2a2a",
 )
 
 # Stark monochrome theme on true-black surfaces.
