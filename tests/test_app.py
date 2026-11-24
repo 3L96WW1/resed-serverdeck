@@ -41,6 +41,10 @@ async def test_dashboard_responds_to_resize():
         await pilot.pause(0.4)
         assert app._detail_visible is True
         assert len(table.columns) == len(SPLIT_COLUMNS)
+        await pilot.resize_terminal(128, 48)
+        await pilot.pause(0.4)
+        assert app._detail_visible is True
+        assert len(table.columns) == len(COMPACT_COLUMNS)
         await pilot.resize_terminal(80, 24)
         await pilot.pause(0.4)
         assert app._detail_visible is False

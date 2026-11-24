@@ -204,8 +204,13 @@ class ServerDeckApp(App[None]):
 
     def _columns(self) -> tuple[tuple[str, str, int], ...]:
         width = self.size.width
-        if self._detail_visible and width < 152:
-            return SPLIT_COLUMNS
+        if self._detail_visible:
+            if width < 136:
+                # At 128 columns the sidebar + split table would clip STATUS.
+                # Keep the six essential columns so everything stays readable.
+                return COMPACT_COLUMNS
+            if width < 152:
+                return SPLIT_COLUMNS
         if width >= 112:
             return WIDE_COLUMNS
         return COMPACT_COLUMNS
@@ -253,7 +258,7 @@ class ServerDeckApp(App[None]):
 
     def _apply_visibility(self) -> None:
         width = self.size.width
-        visible = width >= 136 and self.size.height >= 24
+        visible = width >= 128 and self.size.height >= 24
         self._detail_visible = visible
         self.query_one("#detail-panel").display = visible
         self.query_one("#refresh-state").display = width >= 110
