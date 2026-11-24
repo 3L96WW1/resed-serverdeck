@@ -287,6 +287,8 @@ settings:
 ```bash
 sudo apt install fbterm
 sudo usermod -aG video "$USER"
+# 如果普通用户启动提示 Operation not permitted：
+sudo setcap cap_sys_tty_config+ep /usr/bin/fbterm
 # 重新登录后
 fbterm -n "DejaVu Sans Mono" -s 16
 ```
