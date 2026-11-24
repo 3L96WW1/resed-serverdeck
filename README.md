@@ -271,6 +271,28 @@ servers:
 
 按 `g` 依次切换 `全部 → Default Server Group → Production Web → ...`。表头会显示当前群组，顶部汇总和自动翻页也只在当前群组内工作。
 
+### 物理 TTY 与 8 色终端
+
+如果服务器直接接显示器，Linux 的 `tty1` 通常只有 8 色，`theme: black` 的颜色会被压缩，浅灰色文字也可能不可见。这种情况使用：
+
+```yaml
+settings:
+  theme: console
+```
+
+`console` 使用高对比 ANSI 颜色、`#` / `-` ASCII 进度条和 `* / ! / x` 状态标记，不依赖特殊 Unicode 字形。
+
+如果需要接近桌面终端的 256 色效果，可以在 Ubuntu 上使用 `fbterm`：
+
+```bash
+sudo apt install fbterm
+sudo usermod -aG video "$USER"
+# 重新登录后
+fbterm -n "DejaVu Sans Mono" -s 16
+```
+
+`fbterm` 需要能读写 `/dev/fb0`，所以当前用户必须在 `video` 组；它支持 256 色和正常等宽字体，适合直接占用物理 TTY。没有 `fbterm` 时仍可用 `console` 主题。
+
 ### 状态变化通知
 
 ```yaml
@@ -331,7 +353,7 @@ serverdeck --theme console   # 8 色物理终端：高对比 + ASCII 进度条
 | `midnight` | `#060d14` 深蓝黑 | 亮绿/亮红/青 | 原版深蓝观感、普通桌面终端 |
 | `console` | `#000000` 纯黑 | 高对比 ANSI 8 色 + ASCII 进度条 | Linux 物理 TTY、8 色终端、老式控制台 |
 
-主题只改变颜色；表格列数和侧栏由终端宽高决定。若想完全复现之前第一版截图的 6 列布局，把终端宽度调到 136–151 列。
+主题只改变颜色；表格列数和侧栏由终端宽高决定。若想完全复现之前第一版截图的 6 列布局，把终端宽度调到 128–151 列。
 
 主题预览（`console` 适合直接看物理 TTY，不依赖 RGB 色板）：
 
