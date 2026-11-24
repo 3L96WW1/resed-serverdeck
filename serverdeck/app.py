@@ -32,7 +32,7 @@ from .render import (
 from .themes import Palette, palette_for
 
 WIDE_COLUMNS: tuple[tuple[str, str, int], ...] = (
-    ("host", "HOST", 17),
+    ("host", "HOST", 24),
     ("uptime", "UPTIME", 8),
     ("cpu", "CPU", 11),
     ("mem", "MEM", 11),
@@ -216,7 +216,7 @@ class ServerDeckApp(App[None]):
         width = self.size.width
         if self._detail_visible:
             if width >= 146:
-                if width >= 152:
+                if width >= 160:
                     return WIDE_COLUMNS
                 return MEDIUM_COLUMNS
             if width >= 136:
