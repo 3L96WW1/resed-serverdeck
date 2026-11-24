@@ -271,7 +271,7 @@ class ServerDeckApp(App[None]):
 
     def _apply_visibility(self) -> None:
         width = self.size.width
-        default_visible = width >= 160 and self.size.height >= 24
+        default_visible = width >= 128 and self.size.height >= 24
         visible = (
             self._inspect_forced
             if self._inspect_forced is not None
@@ -280,7 +280,7 @@ class ServerDeckApp(App[None]):
         self._detail_visible = visible
         detail_panel = self.query_one("#detail-panel")
         detail_panel.display = visible
-        detail_panel.styles.width = 40
+        detail_panel.styles.width = 32 if width < 152 else 40
         self.query_one("#refresh-state").display = width >= 110
         self.query_one("#footer", Static).update(
             footer_text(
