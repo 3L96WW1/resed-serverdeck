@@ -37,7 +37,7 @@ class Thresholds:
 
 @dataclass(frozen=True, slots=True)
 class Settings:
-    theme: Literal["graphite", "mono", "black", "midnight"] = "mono"
+    theme: Literal["graphite", "mono", "black", "midnight", "console"] = "mono"
     refresh_interval: float = 5.0
     auto_page: bool = True
     auto_page_interval: float = 6.0
@@ -188,9 +188,9 @@ def _parse_settings(raw: Any) -> Settings:
 
     default = DEFAULT_SETTINGS
     theme = _string(data.get("theme", default.theme), "settings.theme").lower()
-    if theme not in {"graphite", "mono", "black", "midnight"}:
+    if theme not in {"graphite", "mono", "black", "midnight", "console"}:
         raise ConfigError(
-            "settings.theme must be 'graphite', 'mono', 'black', or 'midnight'"
+            "settings.theme must be 'graphite', 'mono', 'black', 'midnight', or 'console'"
         )
     refresh = _number(
         data.get("refresh_interval", default.refresh_interval),

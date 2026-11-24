@@ -60,7 +60,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--theme",
         choices=THEME_NAMES,
-        help="override the theme from the config: mono, black, or midnight",
+        help="override the theme from the config: graphite, mono, black, midnight, or console",
     )
     parser.add_argument(
         "--no-color",

@@ -24,6 +24,19 @@ STATUS_ICON = {
     ServerStatus.OFFLINE: "●",
     ServerStatus.CHECKING: "○",
 }
+PLAIN_STATUS_ICON = {
+    ServerStatus.ONLINE: "*",
+    ServerStatus.DEGRADED: "!",
+    ServerStatus.OFFLINE: "x",
+    ServerStatus.CHECKING: "?",
+}
+PLAIN_SPARKLINE = " .:-=+*#%@"
+
+
+def _status_icon(status: ServerStatus, palette: Palette) -> str:
+    if palette.plain:
+        return PLAIN_STATUS_ICON[status]
+    return STATUS_ICON[status]
 
 
 def _status_style(status: ServerStatus, palette: Palette) -> str:
@@ -39,7 +52,9 @@ def status_badge(
     status: ServerStatus, palette: Palette, *, lowercase: bool = False
 ) -> Text:
     label = status.value if lowercase else status.value.upper()
-    return Text(f"{STATUS_ICON[status]} {label}", style=_status_style(status, palette))
+    return Text(
+        f"{_status_icon(status, palette)} {label}", style=_status_style(status, palette)
+    )
 
 
 def metric_color(percent: float, threshold: float, palette: Palette) -> str:
@@ -60,8 +75,12 @@ def mini_gauge(
     filled = int(round(percent / 100 * width))
     filled = max(0, min(width, filled))
     result = Text()
-    result.append("█" * filled, style=color)
-    result.append("░" * (width - filled), style=palette.muted)
+    if palette.plain:
+        result.append("#" * filled, style=color)
+        result.append("-" * (width - filled), style=palette.muted)
+    else:
+        result.append("█" * filled, style=color)
+        result.append("░" * (width - filled), style=palette.muted)
     result.append(f" {percent:>3.0f}%", style=color)
     return result
 
@@ -134,9 +153,9 @@ def table_cells(
     rx = compact_rate(snapshot.rx_rate, suffix=False)
     tx = compact_rate(snapshot.tx_rate, suffix=False)
     net = Text()
-    net.append("↓", style=palette.cyan)
+    net.append("v" if palette.plain else "↓", style=palette.cyan)
     net.append(f" {rx}", style=palette.soft)
-    net.append("  ↑", style=palette.green)
+    net.append("  ^" if palette.plain else "  ↑", style=palette.green)
     net.append(f" {tx}", style=palette.soft)
     cells["net"] = net
     cells["uptime"] = Text(human_uptime(metrics.uptime_seconds), style=palette.soft)
@@ -176,7 +195,7 @@ def summary_line(snapshots: Iterable[ServerSnapshot], palette: Palette) -> Text:
         if index and text.plain:
             text.append("   ")
         style = summary_styles[status]
-        text.append(STATUS_ICON[status] + " ", style=style)
+        text.append(_status_icon(status, palette) + " ", style=style)
         text.append(f"{count} {status.value}", style=style)
     text.append(f"   ·   {len(items)} hosts", style=palette.muted)
     return text
@@ -185,7 +204,8 @@ def summary_line(snapshots: Iterable[ServerSnapshot], palette: Palette) -> Text:
 def _section(text: Text, title: str, palette: Palette, width: int = 33) -> None:
     label = title.upper() + " "
     text.append(label, style=f"bold {palette.accent}")
-    text.append("─" * max(3, width - len(label)) + "\n", style=palette.border)
+    line = "-" if palette.plain else "─"
+    text.append(line * max(3, width - len(label)) + "\n", style=palette.border)
 
 
 def _kv(
@@ -221,8 +241,12 @@ def _gauge_line(
     color = metric_color(percent, threshold, palette)
     filled = max(0, min(width, int(round(percent / 100 * width))))
     text.append(f"{label:<5}", style=palette.muted)
-    text.append("█" * filled, style=color)
-    text.append("░" * (width - filled), style=palette.border)
+    if palette.plain:
+        text.append("#" * filled, style=color)
+        text.append("-" * (width - filled), style=palette.border)
+    else:
+        text.append("█" * filled, style=color)
+        text.append("░" * (width - filled), style=palette.border)
     text.append(f" {percent:>3.0f}%", style=color)
     if detail:
         text.append(f"  {detail}\n", style=palette.soft)
@@ -233,11 +257,13 @@ def _gauge_line(
 def _sparkline(
     values: Iterable[float], palette: Palette, width: int = 26, threshold: float = 80
 ) -> Text:
-    chars = "▁▂▃▄▅▆▇█"
+    chars = PLAIN_SPARKLINE if palette.plain else "▁▂▃▄▅▆▇█"
     points = list(values)[-width:]
     result = Text()
     if not points:
-        result.append("collecting…", style=palette.muted)
+        result.append(
+            "collecting..." if palette.plain else "collecting…", style=palette.muted
+        )
         return result
     for value in points:
         value = max(0.0, min(100.0, value))
@@ -248,20 +274,24 @@ def _sparkline(
 
 def _service_line(name: str, state: str, palette: Palette) -> Text:
     text = Text()
+    if palette.plain:
+        active_icon, inactive_icon, pending_icon, unknown_icon = "* ", "x ", "! ", "? "
+    else:
+        active_icon, inactive_icon, pending_icon, unknown_icon = "● ", "○ ", "◐ ", "○ "
     if state == "active":
-        text.append("● ", style=palette.online)
+        text.append(active_icon, style=palette.online)
         text.append(f"{name[:17]:<18}", style=palette.text)
         text.append("running", style=palette.online)
     elif state in {"inactive", "failed"}:
-        text.append("○ ", style=palette.offline)
+        text.append(inactive_icon, style=palette.offline)
         text.append(f"{name[:17]:<18}", style=palette.text)
         text.append(state, style=palette.offline)
     elif state in {"activating", "deactivating", "reloading"}:
-        text.append("◐ ", style=palette.amber)
+        text.append(pending_icon, style=palette.amber)
         text.append(f"{name[:17]:<18}", style=palette.text)
         text.append(state, style=palette.amber)
     else:
-        text.append("○ ", style=palette.muted)
+        text.append(unknown_icon, style=palette.muted)
         text.append(f"{name[:17]:<18}", style=palette.text)
         text.append(state or "unknown", style=palette.muted)
     return text
@@ -298,7 +328,7 @@ def detail_text(
         location += "  ·  " + " ".join(f"#{tag}" for tag in server.tags)
     text.append(_fit(location, 33), style=palette.muted)
     text.append("\n")
-    text.append("─" * 33 + "\n", style=palette.border)
+    text.append(("-" if palette.plain else "─") * 33 + "\n", style=palette.border)
 
     if metrics is None:
         if snapshot.status is ServerStatus.CHECKING:
@@ -402,7 +432,7 @@ def detail_text(
         text.append("\n")
         _section(text, "attention", palette)
         for issue in snapshot.issues:
-            text.append("▲ ", style=palette.amber)
+            text.append("! " if palette.plain else "▲ ", style=palette.amber)
             text.append(issue + "\n", style=palette.amber)
 
     if metrics.services:
@@ -429,7 +459,7 @@ def footer_text(
     text = Text()
     auto_label = "auto on" if auto_page_enabled else "auto off"
     for key, label in (
-        ("↑↓", "select"),
+        ("^v" if palette.plain else "↑↓", "select"),
         ("r", "refresh"),
         ("p", "pause"),
         ("a", auto_label),
@@ -451,7 +481,7 @@ def footer_text(
 
 def brand_text(palette: Palette) -> Text:
     text = Text()
-    text.append("◆ ", style=f"bold {palette.accent}")
+    text.append("* " if palette.plain else "◆ ", style=f"bold {palette.accent}")
     text.append("SERVER", style=f"bold {palette.text}")
     text.append("DECK", style=f"bold {palette.accent}")
     text.append("   FLEET OPERATIONS", style=palette.muted)
@@ -481,7 +511,17 @@ def refresh_text(
 
     text = Text()
     bar_width = 10
-    if paused:
+    if palette.plain:
+        if paused:
+            label = "|| PAUSE"
+        elif refreshing:
+            spinner = "|/-\\"
+            label = f"{spinner[frame % 4]} SYNC"
+        elif starting:
+            label = "o START"
+        else:
+            label = "* LIVE"
+    elif paused:
         label = "⏸ PAUSED"
     elif refreshing:
         spinner = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"[frame % 10]
@@ -494,13 +534,17 @@ def refresh_text(
     text.append(f"{label:<8}", style=palette.text if not starting else palette.muted)
     text.append(" ")
     if paused or starting or refreshing:
-        text.append("░" * bar_width, style=palette.border)
+        text.append(("-" if palette.plain else "░") * bar_width, style=palette.border)
         return text
 
     progress = 0.0
     if interval > 0 and next_in is not None:
         progress = max(0.0, min(1.0, 1.0 - next_in / interval))
     filled = int(round(progress * bar_width))
-    text.append("█" * filled, style=palette.soft)
-    text.append("░" * (bar_width - filled), style=palette.border)
+    if palette.plain:
+        text.append("#" * filled, style=palette.soft)
+        text.append("-" * (bar_width - filled), style=palette.border)
+    else:
+        text.append("█" * filled, style=palette.soft)
+        text.append("░" * (bar_width - filled), style=palette.border)
     return text

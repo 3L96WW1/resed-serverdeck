@@ -4,7 +4,7 @@
 version: 1
 
 settings:
-  theme: mono            # default; graphite, mono, or midnight also available
+  theme: mono            # mono | black | graphite | midnight | console
   refresh_interval: 5        # seconds between polls (1-3600)
   auto_page: true            # rotate through servers automatically
   auto_page_interval: 6      # seconds per server

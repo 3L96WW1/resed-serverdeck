@@ -18,7 +18,7 @@
 - **自动翻页**：多服务器时默认每 6 秒切换一台，`a` 键可临时开关。
 - **启动动画**：先显示带 spinner 的启动日志，再进入仪表盘；首次进入时服务器行从上到下逐个出现。
 - **INSPECT 切换动画**：选中服务器切换时，详情内容淡入，边框标题短暂显示 `INSPECT → 主机名`。
-- **四种主题**：`mono` 纯黑单色（默认）、`black` 纯黑彩色、`graphite` 还原第一版黑色、`midnight` 深海军蓝彩色。
+- **五种主题**：`mono` 纯黑单色（默认）、`black` 纯黑彩色、`graphite` 还原第一版黑色、`midnight` 深海军蓝彩色、`console` 8 色终端高对比主题。
 - **阈值与健康状态**：CPU、内存、磁盘、每核负载达到阈值或 systemd 服务异常时标为 `degraded`。
 - **轻量历史**：SQLite 每 30 秒记录一次状态和资源，保留 7 天；详情显示 24h 可用率，重启后 CPU sparkline 可续上。
 - **状态变化通知**：离线、恢复、降级、服务停止时在 TUI 内弹出通知，不需要外部告警平台。
@@ -89,7 +89,7 @@ ssh ops@10.0.10.21 'sh -c "hostname; df -Pk /; ps -e >/dev/null"'
 version: 1
 
 settings:
-  theme: mono              # mono=纯黑单色（默认），black=纯黑彩色，graphite=还原第一版黑，midnight=深海军蓝
+  theme: mono              # mono=纯黑单色（默认），black=纯黑彩色，graphite=还原第一版黑，midnight=深海军蓝，console=8色终端
   refresh_interval: 5      # 刷新间隔（秒）
   auto_page: true          # 多服务器时自动翻页
   auto_page_interval: 6    # 每 6 秒切换一台
@@ -311,7 +311,7 @@ settings:
 
 进入仪表盘后，服务器列表首次加载会从上到下逐行出现；切换 `INSPECT` 目标时详情内容淡入，标题短暂显示 `INSPECT → 主机名`，方便确认切换。
 
-### 四种主题
+### 五种主题
 
 在配置文件里改一行，或命令行临时指定：
 
@@ -320,6 +320,7 @@ serverdeck --theme graphite  # 还原第一版黑色：炭黑 #121212 + 灰阶�
 serverdeck --theme mono      # 纯黑 #000000 + 灰阶，对比更强
 serverdeck --theme black     # 纯黑 + 绿/红/青色强调
 serverdeck --theme midnight  # 深海军蓝 + 色彩强调
+serverdeck --theme console   # 8 色物理终端：高对比 + ASCII 进度条
 ```
 
 | 主题 | 背景 | 强调色 | 适合 |
@@ -328,10 +329,11 @@ serverdeck --theme midnight  # 深海军蓝 + 色彩强调
 | `mono` | `#000000` 纯黑 | 全灰阶 | 当前默认；服务器机柜、值班屏、需要更高对比度 |
 | `black` | `#000000` 纯黑 | 亮绿/亮红/青 | 纯黑背景 + 彩色告警 |
 | `midnight` | `#060d14` 深蓝黑 | 亮绿/亮红/青 | 原版深蓝观感、普通桌面终端 |
+| `console` | `#000000` 纯黑 | 高对比 ANSI 8 色 + ASCII 进度条 | Linux 物理 TTY、8 色终端、老式控制台 |
 
 主题只改变颜色；表格列数和侧栏由终端宽高决定。若想完全复现之前第一版截图的 6 列布局，把终端宽度调到 136–151 列。
 
-四种主题的完整预览：
+主题预览（`console` 适合直接看物理 TTY，不依赖 RGB 色板）：
 
 - [graphite 第一版黑色（还原）](assets/theme-graphite.png)
 - [mono 纯黑单色](assets/theme-mono.png)
@@ -342,7 +344,8 @@ serverdeck --theme midnight  # 深海军蓝 + 色彩强调
 
 - `≥ 152` 列：完整表格 + 详情侧栏
 - `136–151` 列：精简表格（去掉负载和运行时间列）+ 详情侧栏
-- `112–135` 列：完整表格，无侧栏
+- `128–135` 列：紧凑表格 + 详情侧栏（物理 128×48 控制台使用这一档）
+- `112–127` 列：完整表格，无侧栏
 - `< 112` 列：紧凑表格，无侧栏
 
 状态含义：
@@ -443,7 +446,7 @@ ServerDeck 的设计是 **agentless + 单次 shell 探针**：
 
 **终端里颜色/图标显示为方块**
 
-设置 UTF-8 locale（如 `export LANG=C.UTF-8`）并使用支持 Unicode 的等宽字体；实际颜色需要终端支持 256 色/真彩色。
+设置 UTF-8 locale（如 `export LANG=C.UTF-8`）并使用支持 Unicode 的等宽字体；如果是在 Linux 物理 TTY 上，直接使用 `theme: console`，它用高对比 ANSI 色和 ASCII 进度条，不依赖特殊 Unicode 字形。实际颜色仍受终端 8/256/真彩色能力限制。
 
 **颜色怎么来的？和 zsh / Oh My Zsh 有关系吗？**
 
@@ -453,7 +456,7 @@ ServerDeck 的设计是 **agentless + 单次 shell 探针**：
 env | grep -E '^(NO_COLOR|COLORTERM|TERM)='
 ```
 
-如果选了 `graphite` / `mono` 却想要彩色，把配置改成 `theme: black` 或 `theme: midnight`；如果选了彩色主题却仍是黑白，检查是否有 `NO_COLOR` 环境变量。
+如果选了 `graphite` / `mono` 却想要彩色，把配置改成 `theme: black` 或 `theme: midnight`；物理 TTY 建议用 `theme: console`。如果选了彩色主题却仍是黑白，检查是否有 `NO_COLOR` 环境变量。
 
 **同一个 ServerDeck 在不同终端里颜色不完全一样**
 
@@ -483,7 +486,7 @@ serverdeck/
 ├── alerts.py        # 状态变化检测
 ├── history.py       # 轻量 SQLite 历史
 ├── boot.py          # 启动日志与 spinner 动画
-├── themes.py        # 四种主题调色板
+├── themes.py        # 五种主题调色板
 ├── collectors.py    # 本地/SSH 探针、known_hosts、连接复用
 ├── monitor.py       # 并发调度、阈值判定、速率/趋势
 ├── models.py        # 数据类型与格式化

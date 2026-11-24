@@ -10,8 +10,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-ThemeName = Literal["graphite", "mono", "black", "midnight"]
-THEME_NAMES: tuple[ThemeName, ...] = ("graphite", "mono", "black", "midnight")
+ThemeName = Literal["graphite", "mono", "black", "midnight", "console"]
+THEME_NAMES: tuple[ThemeName, ...] = (
+    "graphite",
+    "mono",
+    "black",
+    "midnight",
+    "console",
+)
 DEFAULT_THEME: ThemeName = "mono"
 
 
@@ -29,6 +35,7 @@ class Palette:
     border: str
     accent: str
     chip_bg: str
+    plain: bool = False
 
 
 # The classic deep-navy interface: colored accents on a blue-black background.
@@ -97,11 +104,31 @@ MONO = Palette(
     chip_bg="#1e1e1e",
 )
 
+# High-contrast ANSI palette for the Linux text console and other 8-color
+# terminals.  It intentionally avoids low-contrast grays and uses ASCII
+# gauges so older console fonts can still render every status.
+CONSOLE = Palette(
+    green="bright_green",
+    red="bright_red",
+    online="bright_green",
+    offline="bright_red",
+    amber="bright_yellow",
+    cyan="bright_cyan",
+    muted="white",
+    text="bright_white",
+    soft="white",
+    border="blue",
+    accent="bright_cyan",
+    chip_bg="blue",
+    plain=True,
+)
+
 PALETTES: dict[ThemeName, Palette] = {
     "graphite": GRAPHITE,
     "mono": MONO,
     "black": BLACK,
     "midnight": MIDNIGHT,
+    "console": CONSOLE,
 }
 
 
@@ -120,4 +147,5 @@ def theme_description(theme: str) -> str:
         "mono": "pure black / monochrome",
         "black": "pure black / color accents",
         "midnight": "deep navy / color accents",
+        "console": "high contrast / 8-color console",
     }.get(theme, "unknown")

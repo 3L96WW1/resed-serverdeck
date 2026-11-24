@@ -233,3 +233,44 @@ Screen.theme-graphite DataTable > .datatable--cursor {
 Screen.theme-graphite DataTable > .datatable--hover {
     background: #1b1b1b;
 }
+
+/* Console: high-contrast ANSI palette for Linux TTY / 8-color terminals. */
+Screen.theme-console {
+    background: #000000;
+}
+
+Screen.theme-console #topbar,
+Screen.theme-console #footer,
+Screen.theme-console #table-panel,
+Screen.theme-console #detail-panel {
+    background: #000000;
+}
+
+Screen.theme-console #topbar {
+    border-bottom: solid #005faf;
+}
+
+Screen.theme-console #table-panel,
+Screen.theme-console #detail-panel {
+    border: round #0066cc;
+}
+
+Screen.theme-console #table-panel:focus-within {
+    border: round #00afff;
+}
+
+Screen.theme-console DataTable > .datatable--header,
+Screen.theme-console DataTable > .datatable--even-row {
+    background: #000000;
+    color: #ffffff;
+}
+
+Screen.theme-console DataTable > .datatable--cursor {
+    background: #005faf;
+    color: #ffffff;
+    text-style: bold;
+}
+
+Screen.theme-console DataTable > .datatable--hover {
+    background: #1a1a1a;
+}

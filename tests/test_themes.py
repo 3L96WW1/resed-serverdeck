@@ -9,8 +9,8 @@ from serverdeck.render import refresh_text, status_badge, summary_line
 from serverdeck.themes import PALETTES, palette_for
 
 
-def test_three_named_themes_exist():
-    assert set(PALETTES) == {"graphite", "mono", "black", "midnight"}
+def test_named_themes_exist():
+    assert set(PALETTES) == {"graphite", "mono", "black", "midnight", "console"}
 
 
 def test_mono_palette_is_grayscale():
@@ -35,6 +35,36 @@ def test_mono_palette_is_grayscale():
 
 def test_unknown_theme_falls_back_to_mono():
     assert palette_for("does-not-exist") is PALETTES["mono"]
+
+
+def test_console_theme_is_high_contrast_and_plain():
+    palette = PALETTES["console"]
+    assert palette.plain is True
+    assert palette.text == "bright_white"
+    assert palette.muted == "white"
+    assert palette.online == "bright_green"
+    assert palette.offline == "bright_red"
+
+
+def test_console_theme_uses_ascii_progress_bars():
+    snapshot = replace(
+        initial_snapshot(DEMO_CONFIG.servers[0]),
+        status=ServerStatus.ONLINE,
+    )
+    summary = summary_line([snapshot], PALETTES["console"])
+    assert summary.plain.startswith("* ")
+    output = refresh_text(
+        paused=False,
+        refreshing=False,
+        starting=False,
+        next_in=3,
+        interval=6,
+        palette=PALETTES["console"],
+    )
+    assert len(output.plain) == 19
+    assert "█" not in output.plain
+    assert "░" not in output.plain
+    assert "#" in output.plain
 
 
 def test_colored_themes_use_bright_semantic_status_colors():
