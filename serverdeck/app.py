@@ -58,11 +58,11 @@ COMPACT_COLUMNS: tuple[tuple[str, str, int], ...] = (
     ("status", "STATUS", 10),
 )
 MEDIUM_COLUMNS: tuple[tuple[str, str, int], ...] = (
-    ("host", "HOST", 20),
+    ("host", "HOST", 17),
     ("uptime", "UPTIME", 8),
-    ("cpu", "CPU", 13),
-    ("mem", "MEM", 13),
-    ("disk", "DISK", 13),
+    ("cpu", "CPU", 11),
+    ("mem", "MEM", 11),
+    ("disk", "DISK", 11),
     ("load", "LOAD", 7),
     ("net", "NET RX/TX", 16),
     ("status", "STATUS", 12),
@@ -255,7 +255,7 @@ class ServerDeckApp(App[None]):
                 snapshot,
                 self.thresholds,
                 self.palette,
-                compact=columns is COMPACT_COLUMNS,
+                compact=columns in (COMPACT_COLUMNS, MEDIUM_COLUMNS),
             )
             table.add_row(
                 *(cells[key] for key in self._visible_keys(columns)),
@@ -271,7 +271,9 @@ class ServerDeckApp(App[None]):
         width = self.size.width
         visible = width >= 128 and self.size.height >= 24
         self._detail_visible = visible
-        self.query_one("#detail-panel").display = visible
+        detail_panel = self.query_one("#detail-panel")
+        detail_panel.display = visible
+        detail_panel.styles.width = 32 if width < 152 else 40
         self.query_one("#refresh-state").display = width >= 110
         self.query_one("#footer", Static).update(
             footer_text(
@@ -365,7 +367,7 @@ class ServerDeckApp(App[None]):
             snapshot,
             self.thresholds,
             self.palette,
-            compact=columns is COMPACT_COLUMNS,
+            compact=columns in (COMPACT_COLUMNS, MEDIUM_COLUMNS),
         )
         table.add_row(
             *(cells[key] for key in self._visible_keys(columns)),
@@ -492,7 +494,7 @@ class ServerDeckApp(App[None]):
             snapshot,
             self.thresholds,
             self.palette,
-            compact=columns is COMPACT_COLUMNS,
+            compact=columns in (COMPACT_COLUMNS, MEDIUM_COLUMNS),
         )
         try:
             for key in self._visible_keys(columns):
