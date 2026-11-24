@@ -57,6 +57,16 @@ COMPACT_COLUMNS: tuple[tuple[str, str, int], ...] = (
     ("disk", "DISK", 10),
     ("status", "STATUS", 10),
 )
+MEDIUM_COLUMNS: tuple[tuple[str, str, int], ...] = (
+    ("host", "HOST", 14),
+    ("uptime", "UPTIME", 7),
+    ("cpu", "CPU", 10),
+    ("mem", "MEM", 10),
+    ("disk", "DISK", 10),
+    ("load", "LOAD", 6),
+    ("net", "NET", 14),
+    ("status", "STATUS", 10),
+)
 
 
 class ServerDeckApp(App[None]):
@@ -205,12 +215,13 @@ class ServerDeckApp(App[None]):
     def _columns(self) -> tuple[tuple[str, str, int], ...]:
         width = self.size.width
         if self._detail_visible:
-            if width < 136:
-                # At 128 columns the sidebar + split table would clip STATUS.
-                # Keep the six essential columns so everything stays readable.
-                return COMPACT_COLUMNS
-            if width < 152:
+            if width >= 144:
+                if width >= 152:
+                    return WIDE_COLUMNS
+                return MEDIUM_COLUMNS
+            if width >= 136:
                 return SPLIT_COLUMNS
+            return COMPACT_COLUMNS
         if width >= 112:
             return WIDE_COLUMNS
         return COMPACT_COLUMNS

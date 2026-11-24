@@ -290,7 +290,7 @@ sudo usermod -aG video "$USER"
 # 如果普通用户启动提示 Operation not permitted：
 sudo setcap cap_sys_tty_config+ep /usr/bin/fbterm
 # 重新登录后
-fbterm -n "DejaVu Sans Mono" -s 16 --font-width=8 --font-height=16
+fbterm -n "DejaVu Sans Mono" -s 16 --font-width=7 --font-height=16
 ```
 
 `fbterm` 需要能读写 `/dev/fb0`，所以当前用户必须在 `video` 组；它支持 256 色和正常等宽字体，适合直接占用物理 TTY。没有 `fbterm` 时仍可用 `console` 主题。
@@ -367,8 +367,9 @@ serverdeck --theme console   # 8 色物理终端：高对比 + ASCII 进度条
 布局会随终端大小变化：
 
 - `≥ 152` 列：完整表格 + 详情侧栏
-- `136–151` 列：精简表格（去掉负载和运行时间列）+ 详情侧栏
-- `128–135` 列：紧凑表格 + 详情侧栏（物理 128×48 控制台使用这一档）
+- `144–151` 列：8 列紧凑表格 + 详情侧栏（物理 146×48 控制台使用这一档）
+- `136–143` 列：6 列精简表格 + 详情侧栏
+- `128–135` 列：6 列紧凑表格 + 详情侧栏
 - `112–127` 列：完整表格，无侧栏
 - `< 112` 列：紧凑表格，无侧栏
 

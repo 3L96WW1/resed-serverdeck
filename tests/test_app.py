@@ -10,7 +10,13 @@ from pathlib import Path
 
 import pytest
 
-from serverdeck.app import COMPACT_COLUMNS, SPLIT_COLUMNS, WIDE_COLUMNS, ServerDeckApp
+from serverdeck.app import (
+    COMPACT_COLUMNS,
+    MEDIUM_COLUMNS,
+    SPLIT_COLUMNS,
+    WIDE_COLUMNS,
+    ServerDeckApp,
+)
 from serverdeck.cli import main
 from serverdeck.demo import DEMO_CONFIG, DemoMonitor
 from serverdeck.models import ServerStatus
@@ -45,6 +51,10 @@ async def test_dashboard_responds_to_resize():
         await pilot.pause(0.4)
         assert app._detail_visible is True
         assert len(table.columns) == len(COMPACT_COLUMNS)
+        await pilot.resize_terminal(146, 48)
+        await pilot.pause(0.4)
+        assert app._detail_visible is True
+        assert len(table.columns) == len(MEDIUM_COLUMNS)
         await pilot.resize_terminal(80, 24)
         await pilot.pause(0.4)
         assert app._detail_visible is False
