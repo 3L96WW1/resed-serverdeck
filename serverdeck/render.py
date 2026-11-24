@@ -79,8 +79,8 @@ def mini_gauge(
         result.append("#" * filled, style=color)
         result.append("-" * (width - filled), style=palette.muted)
     else:
-        result.append("█" * filled, style=color)
-        result.append("░" * (width - filled), style=palette.muted)
+        result.append("▰" * filled, style=color)
+        result.append("▱" * (width - filled), style=palette.muted)
     result.append(f" {percent:>3.0f}%", style=color)
     return result
 
@@ -545,6 +545,6 @@ def refresh_text(
         text.append("#" * filled, style=palette.soft)
         text.append("-" * (bar_width - filled), style=palette.border)
     else:
-        text.append("█" * filled, style=palette.soft)
-        text.append("░" * (bar_width - filled), style=palette.border)
+        text.append("▰" * filled, style=palette.soft)
+        text.append("▱" * (bar_width - filled), style=palette.border)
     return text
